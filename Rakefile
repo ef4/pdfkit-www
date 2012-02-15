@@ -145,11 +145,20 @@ def font_metrics(filename)
 end
 
 directory 'dist'
-directory 'src/font_metrics'
+file 'src/font_metrics' => [:fonts]
 
-file 'dist/pdfkit.js' => Dir["src/**/*.coffee"] + ['Rakefile', 'dist', 'build_font_metrics'] do
+file 'dist/pdfkit.js' => Dir["src/**/*.coffee"] + ['Rakefile', 'dist', 'src/font_metrics'] do
+  targets = []
+  targets.push ['pdfkit', "src/pdfkit/lib/document.coffee"]
+  
+  Dir['src/font_metrics/*'].each do |font_file| 
+    font_name = font_file[17...-3]
+    puts "Adding font #{font_name}"
+    targets.push ["font_metrics/#{font_name}"]
+  end
+
   open('dist/pdfkit.js', 'w') do |f|
-    build([['pdfkit', "src/pdfkit/lib/document.coffee"], ['font_metrics/Helvetica']], [], f)
+    build(targets, [], f)
     f.puts tail
   end
 end
@@ -160,18 +169,20 @@ file 'dist/pdfkit.min.js' => ['dist/pdfkit.js'] do
   end
 end
 
-task :clean do
-  FileUtils.rm_r 'dist' if File.exist? 'dist'
-  FileUtils.rm_r 'src/font_metrics' if File.exist? 'src/font_metrics'
-end
-
-task :build_font_metrics => ['src/font_metrics'] do
-  Dir["src/pdfkit/lib/font/data/*.afm"].each do |filename|
-    name = File.basename(filename)[0...-4]
+task :fonts, [:font_names] do |t,args|
+  FileUtils.mkdir_p 'src/font_metrics'
+  args.with_defaults(:font_names => 'Helvetica')
+  args.font_names.split(",").each do |name|
+    filename = "src/pdfkit/lib/font/data/#{name}.afm"
     open("src/font_metrics/#{name}.js", "w") do |f|
       f.write "module.exports = " + font_metrics(filename).to_json
     end
   end
+end
+
+task :clean do
+  FileUtils.rm_r 'dist' if File.exist? 'dist'
+  FileUtils.rm_r 'src/font_metrics' if File.exist? 'src/font_metrics'
 end
 
 task :build => ['dist/pdfkit.js']
