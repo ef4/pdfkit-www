@@ -1,0 +1,3 @@
+[submodule "src/pdfkit"]
+	path = src/pdfkit
+	url = https://github.com/devongovett/pdfkit.git
