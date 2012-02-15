@@ -1,6 +1,12 @@
 require 'bundler'
 require 'coffee-script'
 require 'uglifier'
+require 'stringio'
+require 'json'
+
+def ignored
+  ['flate', './font/ttf', './font/subset', './mixins/images']
+end
 
 def resolve(name, relative_to)
   if /^\./ =~ name
@@ -51,6 +57,7 @@ def rdeps(filename, seen=nil)
   seen ||= {}
   result = []
   deps(filename) do |child_name, child_file|
+    next if ignored.include?(child_name)
     child = locate resolve(child_file, filename)
     if child && File.file?(child)
       unless seen[child_name]
@@ -101,16 +108,48 @@ def preloaded_file(filename)
   end
 end
 
-directory 'dist'
+def modules(name, filename=nil)
+  filename ||= locate(name)
+  mods = [wrapped(name, filename)]
+  rdeps(filename).each do |n, f|
+    mods.push wrapped(n, f)
+  end
+  mods.join("\n")
+end
 
-file 'dist/pdfkit.js' => Dir["src/**/*.coffee"] + ['Rakefile', 'dist'] do
-  open('dist/pdfkit.js', 'w') do |f|
-    f.puts preamble
-    rdeps("src/pdfkit/lib/document.coffee").each do |name, filename|
-      f.puts wrapped(name, filename)
+def build(deps, files, io)
+  io.puts "(function(){"
+  io.puts preamble
+  io.puts "var ignored = #{ignored.inspect};"
+  deps.each do |name, filename|
+    io.puts modules(name, filename)
+  end
+  files.each do |filename|
+    io.puts preloaded_file filename
+  end
+  io.puts "})();"
+end
+
+def font_metrics(filename)
+  src = StringIO.new
+  src.puts "window = {};"
+  build([['font_compiler']], [filename], src)
+  context = ExecJS.compile(src.string)
+  m = context.eval "window.pdfkit.require('font_compiler').metrics('#{filename}')"
+  m.each {|k,v|
+    if v.respond_to?(:nan?) && v.nan?
+      m[k] = nil
     end
-    f.puts wrapped('pdfkit', "src/pdfkit/lib/document.coffee")
-    f.puts preloaded_file "src/pdfkit/lib/font/data/Helvetica.afm"
+  }
+  m
+end
+
+directory 'dist'
+directory 'src/font_metrics'
+
+file 'dist/pdfkit.js' => Dir["src/**/*.coffee"] + ['Rakefile', 'dist', 'build_font_metrics'] do
+  open('dist/pdfkit.js', 'w') do |f|
+    build([['pdfkit', "src/pdfkit/lib/document.coffee"], ['font_metrics/Helvetica']], [], f)
     f.puts tail
   end
 end
@@ -122,7 +161,17 @@ file 'dist/pdfkit.min.js' => ['dist/pdfkit.js'] do
 end
 
 task :clean do
-  FileUtils.rm_r 'dist'
+  FileUtils.rm_r 'dist' if File.exist? 'dist'
+  FileUtils.rm_r 'src/font_metrics' if File.exist? 'src/font_metrics'
+end
+
+task :build_font_metrics => ['src/font_metrics'] do
+  Dir["src/pdfkit/lib/font/data/*.afm"].each do |filename|
+    name = File.basename(filename)[0...-4]
+    open("src/font_metrics/#{name}.js", "w") do |f|
+      f.write "module.exports = " + font_metrics(filename).to_json
+    end
+  end
 end
 
 task :build => ['dist/pdfkit.js']

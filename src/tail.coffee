@@ -1,4 +1,4 @@
-Doc = require('pdfkit')
+Doc = pdfkit.require('pdfkit')
 class window.PDFDocument extends Doc
   constructor: (options) ->
     super(options)
@@ -15,3 +15,14 @@ class window.PDFDocument extends Doc
   dataURI: ->
     'data:application/pdf;base64,' + @b64encode(@output())
 
+  initImages: ->
+
+Font = pdfkit.require('../font')
+Font.prototype.embedStandard = ->
+  @isAFM = true
+  font = pdfkit.require "font_metrics/#{@filename}"
+  {@ascender,@decender,@bbox,@lineGap,@charWidths} = font
+  @ref = @document.ref
+      Type: 'Font'
+      BaseFont: @filename
+      Subtype: 'Type1'

@@ -1,6 +1,9 @@
-modules = {}
-require = (name) ->
-  if modules[name]
+P = window.pdfkit = {}
+modules = P.modules = {}
+require = P.require = (name) ->
+  if ignored.indexOf(name) != -1
+    {}
+  else if modules[name]
     if modules[name].loader
       modules[name].loader()
     modules[name].exports
