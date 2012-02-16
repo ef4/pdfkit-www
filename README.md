@@ -27,7 +27,7 @@ Synposis
           window.open(doc.dataURI());
         }
     </script>
-
+    <button onclick="go()">Go!</button>
 
 Building
 --------
@@ -53,5 +53,9 @@ fonts, manually build the fonts first:
     rake
 
 Or to build all of them:
+
     rake all_fonts
     rake
+
+With only one font the minified library is about 40k. With all fonts
+it goes up to 60k.
