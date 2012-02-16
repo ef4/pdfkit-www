@@ -172,7 +172,7 @@ end
 task :fonts, [:font_names] do |t,args|
   FileUtils.mkdir_p 'src/font_metrics'
   args.with_defaults(:font_names => 'Helvetica')
-  args.font_names.split(",").each do |name|
+  args.font_names.split(" ").each do |name|
     filename = "src/pdfkit/lib/font/data/#{name}.afm"
     open("src/font_metrics/#{name}.js", "w") do |f|
       f.write "module.exports = " + font_metrics(filename).to_json
