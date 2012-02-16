@@ -16,6 +16,11 @@ Javascript application.
   graphics, line wrapping, text alignment, bulleted lists, etc. Does
   not (yet) support TTF font embedding or image embedding.
 
+Demo
+----
+
+[Launch the demo](http://ef4.github.com/pdfkit-www/demo.html)
+
 Synposis
 --------
 
