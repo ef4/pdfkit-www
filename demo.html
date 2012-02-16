@@ -1,5 +1,31 @@
 <html>
 <body>
-Demo will go here
+<script type="text/javascript" src="https://github.com/downloads/ef4/pdfkit-www/pdfkit-0.1-allfonts.min.js"></script>
+
+<script type="text/javascript">
+function go(){
+  var doc = new PDFDocument;
+
+  doc.font('Courier').fontSize(25)
+  doc.text("Courier 25")
+
+  doc.font('Helvetica').fontSize(14)
+  doc.text("Helvetica 14")
+
+  startx = doc.x
+  starty = doc.y
+  text = "Here is a link!"
+  doc.fillColor("blue").text(text).link(startx, starty, doc.widthOfString(text), doc.currentLineHeight(), 'http://www.flickr.com/photos/tags/kitten/interesting/show/')
+
+  doc.moveTo(100, 150).lineTo(100, 250).lineTo(200, 250).fill("#97005e")
+
+  doc.scale(0.6).translate(470, -380).path('M 250,75 L 323,301 131,161 369,161 177,301 z').fill('red', 'even-odd')
+
+  window.open(doc.dataURI())
+}
+</script>
+<p>This is a demo of <a href="https://github.com/ef4/pdfkit-www">pdfkit-www</a>. Click the button to see your browser render a PDF.</p>
+
+<button style="width: 200px; height: 1.5em; font-size: 3em" onclick="go()">Go!</button>
 </body>
 </html>
