@@ -24,15 +24,17 @@ Demo
 Synposis
 --------
 
-    <script type="text/javascript" src="pdfkit.min.js"></script>
-    <script type="text/javascript">
-        function go(){
-          var doc = new PDFDocument;
-          doc.text "Hello World";
-          window.open(doc.dataURI());
-        }
-    </script>
-    <button onclick="go()">Go!</button>
+```html
+<script type="text/javascript" src="pdfkit.min.js"></script>
+<script type="text/javascript">
+    function go(){
+      var doc = new PDFDocument;
+      doc.text "Hello World";
+      window.open(doc.dataURI());
+    }
+</script>
+<button onclick="go()">Go!</button>
+```
 
 Building
 --------
