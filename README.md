@@ -5,8 +5,8 @@ Generate Beautiful PDFs in the Browser
 Javascript application.
 
 * Built on top of [pdfkit](https://github.com/devongovett/pdfkit), a
-  nice library that does pdf generation under Node.js. We repackage
-  and extend it for use in the browser.
+  nice CoffeeScript library that does pdf generation under Node.js. We
+  repackage and extend it for use in the browser.
 
 * Relies on data URIs, sorry IE.
 
@@ -50,4 +50,8 @@ library as small as possible). To enable any of the other built-in PDF
 fonts, manually build the fonts first:
 
     rake "fonts[Times-Roman Courier Helvetica]"
+    rake
+
+Or to build all of them:
+    rake all_fonts
     rake

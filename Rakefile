@@ -180,6 +180,11 @@ task :fonts, [:font_names] do |t,args|
   end
 end
 
+task :all_fonts do
+  fonts = Dir["src/pdfkit/lib/font/data/*.afm"].map {|filename| File.basename(filename)[0...-4] }
+  Rake::Task[:fonts].invoke(fonts.join(" "))
+end
+
 task :clean do
   FileUtils.rm_r 'dist' if File.exist? 'dist'
   FileUtils.rm_r 'src/font_metrics' if File.exist? 'src/font_metrics'
