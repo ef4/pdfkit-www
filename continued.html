@@ -1,0 +1,34 @@
+<html>
+<body>
+<script type="text/javascript" src="https://github.com/downloads/ef4/pdfkit-www/pdfkit-d76bc7b.min.js"></script>
+
+<script type="text/javascript">
+
+  var lorem = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec a diam lectus. Sed sit amet ipsum mauris. Maecenas congue ligula ac quam viverra nec consectetur ante hendrerit. Donec et mollis dolor. Praesent et diam eget libero egestas mattis sit amet vitae augue. Nam tincidunt congue enim, ut porta lorem lacinia consectetur. Donec ut libero sed arcu vehicula ultricies a non tortor. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean ut gravida lorem. Ut turpis felis, pulvinar a semper sed, adipiscing id dolor. Pellentesque auctor nisi id magna consequat sagittis. Curabitur dapibus enim sit amet elit pharetra tincidunt feugiat nisl imperdiet. Ut convallis libero in urna ultrices accumsan. Donec sed odio eros. Donec viverra mi quis quam pulvinar at malesuada arcu rhoncus. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. In rutrum accumsan ultricies. Mauris vitae nisi at sem facilisis semper ac in est."
+
+function go(){
+
+  var opts = {continued: true, indent: 20, columns: 2}
+  var doc = new PDFDocument;
+
+  var toWrite = [lorem, lorem, lorem, lorem, lorem].join("\n")
+
+  var parts = toWrite.split(/ipsum /i);
+  for (var i=0; i<parts.length; i++){
+    doc.text(parts[i], opts);
+    doc.font('Helvetica-Oblique');
+    doc.fillColor('red');
+    if (i+1 < parts.length){
+      doc.text('ipsum ', opts)
+    }
+    doc.font('Helvetica');
+    doc.fillColor('black');
+  }
+  window.open(doc.dataURI())
+}
+</script>
+<p>This is a PDFKit demo using <a href="https://github.com/ef4/pdfkit-www">pdfkit-www</a>. Click the button to see your browser render a PDF.</p>
+
+<button style="width: 200px; height: 1.5em; font-size: 3em" onclick="go()">Go!</button>
+</body>
+</html>
