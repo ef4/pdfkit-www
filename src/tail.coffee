@@ -12,10 +12,12 @@ class window.PDFDocument extends Doc
     else
       throw new Error("You must provide a base64 implementation on IE")
 
-  dataURI: ->
-    'data:application/pdf;base64,' + @b64encode(@output())
+  dataURI: (fn) ->
+    @output (data) =>
+      fn('data:application/pdf;base64,' + @b64encode(data))
 
   initImages: ->
+  embedImages: (fn) -> fn()
 
 Font = pdfkit.require('../font')
 Font.prototype.embedStandard = ->
