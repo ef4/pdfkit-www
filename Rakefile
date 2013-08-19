@@ -5,7 +5,7 @@ require 'stringio'
 require 'json'
 
 def ignored
-  ['zlib', 'flate', './font/ttf', './font/subset']
+  ['zlib', 'flate', './font/ttf', './font/subset', './image/png']
 end
 
 def resolve(name, relative_to)
