@@ -127,15 +127,15 @@ def build(deps, files, io)
   files.each do |filename|
     io.puts preloaded_file filename
   end
+  io.puts tail
   io.puts "})();"
 end
 
 def font_metrics(filename)
   src = StringIO.new
-  src.puts "window = {};"
-  build([['font_compiler']], [filename], src)
+  build([['pdfkit', "src/pdfkit/lib/document.coffee"], ['font_compiler']], [filename], src)
   context = ExecJS.compile(src.string)
-  m = context.eval "window.pdfkit.require('font_compiler').metrics('#{filename}')"
+  m = context.eval "module.exports.wwwHelpers.require('font_compiler').metrics('#{filename}')"
   m.each {|k,v|
     if v.respond_to?(:nan?) && v.nan?
       m[k] = nil
@@ -159,7 +159,6 @@ file 'dist/pdfkit.js' => Dir["src/**/*.coffee"] + ['Rakefile', 'dist', 'src/font
 
   open('dist/pdfkit.js', 'w') do |f|
     build(targets, [], f)
-    f.puts tail
   end
 end
 
@@ -172,7 +171,7 @@ end
 task :fonts, [:font_names] do |t,args|
   FileUtils.mkdir_p 'src/font_metrics'
   args.with_defaults(:font_names => 'Helvetica')
-  args.font_names.split(" ").each do |name|
+  args.font_names.split(":").each do |name|
     filename = "src/pdfkit/lib/font/data/#{name}.afm"
     open("src/font_metrics/#{name}.js", "w") do |f|
       f.write "module.exports = " + font_metrics(filename).to_json

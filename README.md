@@ -56,7 +56,7 @@ By default we only include font metrics for Helvetica (to keep the
 library as small as possible). To enable any of the other built-in PDF
 fonts, manually build the fonts first:
 
-    rake "fonts[Times-Roman Courier Helvetica]"
+    rake "fonts[Times-Roman:Courier:Helvetica]"
     rake
 
 Or to build all of them:

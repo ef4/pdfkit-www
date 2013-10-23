@@ -1,4 +1,4 @@
-P = window.pdfkit = {}
+P = {}
 modules = P.modules = {}
 require = P.require = (name) ->
   if ignored.indexOf(name) != -1
