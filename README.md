@@ -1,3 +1,8 @@
+Attention: The upstream pdfkit now [supports in-browser usage](https://github.com/devongovett/pdfkit#browser-usage) without needing this fork. 
+============================
+
+
+
 Generate Beautiful PDFs in the Browser
 ======================================
 
